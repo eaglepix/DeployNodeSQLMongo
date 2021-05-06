@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>
+    <%=title%>
+  </title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+
+  <script>
+    $(document).ready(function () {
+      console.log("document loaded");
+      $('#loginAlert').hide();
+      const urlParams = new URLSearchParams(window.location.search);
+      const myParam = urlParams.get('error');
+      if (myParam == "Incorrect_Credential") {
+        $('#loginAlert').show();
+      }
+    });
+
+  </script>
+
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark" id="mainNav">
+    <!-- bg-dark primary success info  //  navbar-light  -->
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="#top">
+        Node.JS SQL/MongoDB Project
+      </a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+        data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+        aria-label="Toggle Navigation">Menu <i class="fa fa-bars"></i></button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav text-uppercase ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/books" id="navbarDropdown" role="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <%=title%>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <%for(let i=0; i<nav.length; i++) {%>
+                <a class="dropdown-item" href="<%=nav[i].link%>">
+                  <%=nav[i].title%>
+                </a>
+                <%}%>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/">Main Menu</a>
+            </div>
+          </li>
+          <!-- <%for(let i=0; i<nav.length; i++) {%>
+            <li class="nav-item">
+              <a href="<%=nav[i].link%>" class="nav-link js-scroll-trigger">
+                <%=nav[i].title%>
+              </a>
+            </li>
+            <%}%> -->
+
+          <form class="form-inline my-2 my-lg-0" action="">
+            <input class="form-control mr-sm-2 mx-3" type="text" placeholder="Search" name="" id="">
+            <button class="btn btn-outline-success my-2 my-sm-0">Search</button>
+          </form>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h4 class="display-5 text-muted my-4">Sign Up or Sign In</h3>
+      <h5 class="display-5 text-muted">Press here to go to Sign In page:</h5>
+      <a href="/auth/signin" class="mt-3 mr-5 btn btn-success btn-lg btn-block">Sign In</a>
+      <hr>
+      <form name="signUpForm" action="/auth/signUp" method="post" class="form-inline columns">
+        <input type="text" name="username" id="username" class="form-control mr-2" placeholder="Username" required>
+        <input type="text" name="password" id="password" class="form-control mr-2" placeholder="Password" required>
+        <br>
+        <button class="mt-3 btn btn-warning btn-lg btn-block" type="submit" value="Sign Up">Sign Up</button>
+      </form>
+      <br><br>
+      <div class="alert alert-danger alert-dismissible" role="alert" id="loginAlert">
+        <p style="text-align: center;"><strong> Invalid username or password entry</strong></p>
+        <p style="text-align: center;">Username and Password must have at least 8 characters, have upper and lower cases, have numeral, and no space</p>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">×</span>
+      </div>
+  </div>
+
+
+
+  <!-- <div class="container">
+    <div class="col-md-2 col-sm-3 ">
+      Sign Up! or <a href="/auth/signin">sign in</a>
+      <form name="signUpForm" action="/auth/signUp" method="post">
+        UserName: <input name="username" id="username"><br>
+        Password: <input name="password" id="password"><br>
+        <input type="submit" value="Sign Up">
+    </div>
+  </div> -->
+
+
+  <!-- script references -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
+  <script>
+
+  </script>
+</body>
+
+</html>

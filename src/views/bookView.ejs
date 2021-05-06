@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+  <link href="css/styles.css" rel="stylesheet">
+  <title>
+    <%=title%>
+  </title>
+
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark" id="mainNav">
+    <!-- bg-dark primary success info  //  navbar-light  -->
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="#top">
+        Node.JS SQL/MongoDB Project
+      </a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+        data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+        aria-label="Toggle Navigation">Menu <i class="fa fa-bars"></i></button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav text-uppercase ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/books" id="navbarDropdown" role="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              Menu </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <%for(let i=0; i<nav.length; i++) {%>
+                <a class="dropdown-item" href="<%=nav[i].link%>">
+                  <%=nav[i].title%>
+                </a>
+                <%}%>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/">Main Menu</a>
+            </div>
+          </li>
+
+          <form class="form-inline my-2 my-lg-0" action="">
+            <input class="form-control mr-sm-2 mx-3" type="text" placeholder="Search" name="" id="">
+            <button class="btn btn-outline-success my-2 my-sm-0">Search</button>
+          </form>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" id="">
+    <div class="jumbotron mt-1 alert-warning">
+      <h2>
+        <%=title%>
+      </h2>
+    </div>
+  </div><!-- /cont -->
+
+  <div class="container">
+    <div class="row">
+      <!--/stories-->
+      <div class="col-md-2 col-sm-3 text-center">
+        <a class="story-title" href="#">
+          <img alt="" src=<%=picture%> style="width:130px;height:150px;overflow:hidden;" class="img-fluid text-center"></a>
+      </div>
+      <div class="col-md-10 col-sm-9">
+        <h3>
+          <%=customerName%>
+        </h3>
+        <div class="row">
+          <div class="col-xs-9">
+            <h4 class="text-muted">
+              <%=contactName%>
+            </h4>
+            <h4><small class="text-muted">
+                <%=comm1%> <br>
+                  <%=comm2%> <br>
+                    <%=comm3%> <br>
+                      <%=detail_1%>
+                        <hr>
+                        <%=detail_2%>
+                          <hr>
+                          <%-detail_3%>
+            </h4>
+          </div>
+        </div>
+        <br>
+        <a href="/<%=database%>/<%=pageNum%>" class="btn btn-success float-right">Back </a>
+      </div>
+    </div>
+  </div>
+
+
+  <hr>
+  <div class="container" id="footer">
+    <div class="row">
+      <div class="col col-sm-12">
+
+        <h1>Follow Us</h1>
+        <div class="btn-group">
+          <a class="btn btn-twitter btn-lg" href="#"><i class="icon-twitter icon-large"></i> Twitter</a>
+          <a class="btn btn-facebook btn-lg" href="#"><i class="icon-facebook icon-large"></i> Facebook</a>
+          <a class="btn btn-google-plus btn-lg" href="#"><i class="icon-google-plus icon-large"></i> Google+</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <hr>
+
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <ul class="list-inline">
+            <li><i class="icon-facebook icon-2x"></i></li>
+            <li><i class="icon-twitter icon-2x"></i></li>
+            <li><i class="icon-google-plus icon-2x"></i></li>
+            <li><i class="icon-pinterest icon-2x"></i></li>
+          </ul>
+
+        </div>
+        <div class="col-sm-6">
+          <p class="pull-right">Built with <i class="icon-heart-empty"></i> at <a
+              href="http://www.bootply.com">Bootply</a></p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- script references -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
+  <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">-->
+</body>
+
+</html>
