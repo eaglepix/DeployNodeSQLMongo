@@ -11,6 +11,7 @@ import datetime
 from os import walk
 import pickle
 import bz2
+import yfinance as yf
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
@@ -93,9 +94,9 @@ def downloadTickerNameLocal(run_list, list_directory):
 
 ####################################################################################################
 """PROBE: Getting a particular stock entire history rank
-    get_stk_history_rank : modified 5/5/21"""
+    get_stk_history_rank : modified 6/5/21"""
 
-def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol):
+def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline):
     df_chart_period = pd.DataFrame([])
     ranking_history = {}
     try:
@@ -103,12 +104,24 @@ def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_dire
                                    list(df_top_momentum_names.loc[i,:]) else [i,np.nan] for i in df_top_momentum_names.index]
         df_ticker_plot = pd.DataFrame(ranking_history[ticker])
         
-        fig, ax = plt.subplots(figsize=(16,10))
-        if run_list=='InterMkt_CrossAsset':
-            df_chart = pd.read_csv(filepath+'\\'+df_list['sub_Path'][df_list['Symbol']==ticker].values[0] \
-                                   +'\\'+ticker+'.csv',  parse_dates=True, index_col='Date')
+        # Run online to retrieve ticker name and historical prices:
+        if runOnline=='Y': # yfinance
+            yfTickerObj = yf.Ticker(ticker)
+            tickerName = yfTickerObj.info['shortName']
+
+            chartPeriodStart = df_top_momentum_names.index[0]
+            chartPeriodEnd = df_top_momentum_names.index[-1]
+            df_chart = yf.download(ticker, start=chartPeriodStart, end=chartPeriodEnd)
+            df_chart.dropna(inplace=True)
         else:
-            df_chart = pd.read_csv(filepath+'\\'+list_directory+'\\'+ticker+'.csv', parse_dates=True, index_col='Date')
+            # Run offline
+            if run_list=='InterMkt_CrossAsset':
+                df_chart = pd.read_csv(filepath+'\\'+df_list['sub_Path'][df_list['Symbol']==ticker].values[0] \
+                                    +'\\'+ticker+'.csv',  parse_dates=True, index_col='Date')
+            else:
+                df_chart = pd.read_csv(filepath+'\\'+list_directory+'\\'+ticker+'.csv', parse_dates=True, index_col='Date')
+                tickerName = df_list_symbol['Name'][ticker]
+
     except FileNotFoundError:
         print('Wrong ticker or the Stock {} is not found in the database'.format(ticker))
         print('Exiting program')
@@ -118,13 +131,14 @@ def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_dire
     try:
         df_chart_period['Adj Close']= df_chart['Adj Close'][df_top_momentum_names.index[0]:]
         df_chart_period['AdjClose_MA']= df_chart['Adj Close'].rolling(SMA).mean()[df_top_momentum_names.index[0]:]
-
+        print(df_chart_period.info(), df_chart_period[['Adj Close','AdjClose_MA']].tail())
         #Masking with colors:
         cUpper = np.ma.masked_where(df_chart_period['Adj Close'][df_top_momentum_names.index[0]:].values < df_chart_period['AdjClose_MA'][df_top_momentum_names.index[0]:].values, 
                                     df_chart_period['Adj Close'][df_top_momentum_names.index[0]:].values)
         cLower = np.ma.masked_where(df_chart_period['Adj Close'][df_top_momentum_names.index[0]:].values > df_chart_period['AdjClose_MA'][df_top_momentum_names.index[0]:].values, 
                                     df_chart_period['Adj Close'][df_top_momentum_names.index[0]:].values)
 
+        fig, ax = plt.subplots(figsize=(16,10))
         ax.plot(df_chart_period['Adj Close'][df_top_momentum_names.index[0]:],c='grey',label=ticker+'(Neutral)',zorder=4)
         ax.plot(df_chart_period['Adj Close'][df_top_momentum_names.index[0]:].index,cUpper,c='b',label=ticker+'(Buy)',zorder=5)
         ax.plot(df_chart_period['Adj Close'][df_top_momentum_names.index[0]:].index,cLower,c='r',label=ticker+'(Sell)',zorder=5)
@@ -146,7 +160,7 @@ def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_dire
         ax2.set_ylim(len(df_top_momentum_names.columns)+1,1)   #Inverse y-axis
         ax2.axhline(20, c='grey')
         ax2.legend(loc=2)
-        ax.set_title(df_list_symbol['Name'][ticker], fontsize=11, loc='center', pad=1)
+        ax.set_title(tickerName, fontsize=11, loc='center', pad=1)
 
     except (ValueError, KeyError) as e:
         print('Ticker {} not found in the ranking list or error in plotting RS chart'.format(ticker))
@@ -176,7 +190,7 @@ def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_dire
 ###############################################################################
 def main():
     # Input Panel
-    runOnOffline = input('Running this online(1) or local offline(2) [default:2] ?')
+    runOnline = input('Running this online [default: Local offline] (Y/N)?').upper()
     market2run = input(f'Select a market to run {run_list_universe.keys()}:')
     run_list_lib ={market2run: run_list_universe[market2run]}
     BM_index_num, run_list_num = run_list_lib[market2run][0], run_list_lib[market2run][1]
@@ -186,6 +200,7 @@ def main():
     run_list = listOflistLibrary[run_list_num]
 
     print(run_list_lib, run_list, BM_index)
+    fileStr2 = run_list+year+period+model
 
     if run_list=='ETF':
         list_directory = sub_path[1]
@@ -193,25 +208,25 @@ def main():
         list_directory = sub_path[0]
     print('list_directory',list_directory)
 
-    fileStr2 = run_list+year+period+model
-
-    if runOnOffline!='1':
+    if runOnline!='Y':
         df_list, df_list_symbol = downloadTickerNameLocal(run_list, list_directory)
-        # Decompressing top_momentum_model .pbz2 & convert to pickle:
-        data = bz2.BZ2File(fileStr1+fileStr2+'.pbz2', 'rb')
-        df_top_momentum_names = pickle.load(data)
     else:
-        pass
+        # If run online to abstract ticker from yfinance, no need to get ticker name
+        df_list, df_list_symbol = [],[]
+
+    # Decompressing top_momentum_model .pbz2 & convert to pickle:
+    data = bz2.BZ2File(fileStr1+fileStr2+'.pbz2', 'rb')
+    df_top_momentum_names = pickle.load(data)
 
     response = ''
     selectList=input('Select a ticker or a list to run: {}'.format(holdingList.keys()))
     if selectList not in holdingList.keys():
         ticker = selectList.upper()
-        get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol)
+        get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
         response=input('<Enter> to continue next name, "Q" to quit : ')
         while response not in ['Q','q']:
             ticker = input('Please key in next ticker: ').upper()
-            get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol)
+            get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
             response=input('<Enter> to continue next name, "Q" to quit : ')
         print('Ends!')
         exit()
@@ -219,7 +234,7 @@ def main():
     else:
         for i in holdingList[selectList]:    
             ticker = i
-            get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol)
+            get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
             response=input('<Enter> to continue next name, other keys to quit : ')
             if response=='':
                 continue
