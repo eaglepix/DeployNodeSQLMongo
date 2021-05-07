@@ -14,7 +14,8 @@ const session = require('express-session');
 const mysql = require('mysql');
 //---------------------------------------------------------
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000; // Boolean: if main port fails use backup port 3000
+//Not recommended to do port this way: process.env.PORT doesn't check if the port is available
 
 // MySQL - own adaptation
 const pool = mysql.createPool({

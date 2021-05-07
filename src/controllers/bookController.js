@@ -27,20 +27,23 @@ function getJSON(numCustomer) {
 };
 
 async function asyncCall(bookService, nav, req, res, option) {
-    console.log('calling getJSON()');
     // MongoDB connection
     const url = 'mongodb://localhost:27017';
     const dbName = 'libraryApp';
 
     if (option == 1) {
+        console.log('calling randomuser photos');
         const faceLinkArray = await getJSON(numCustomer);
-        console.log('async', faceLinkArray);
+        console.log('randomuser successfully retrieved', faceLinkArray);
 
         (async function mongo() {
             let client;
             try {
-                client = await MongoClient.connect(url);
-                debug('Connected correctly to MongoDB server');
+                client = await MongoClient.connect(url, {
+                    useNewUrlParser: true,
+                    useUnifiedTopology: true
+                  });
+                console.log('Connected correctly to MongoDB server');
                 const db = client.db(dbName);
 
                 const col = await db.collection('books');

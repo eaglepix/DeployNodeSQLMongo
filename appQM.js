@@ -27,8 +27,8 @@ const pool = mysql.createPool({
 });
 pool.getConnection((err, connection) => {
     if (err) throw err => { debug(err) };
-    console.log(`connected as id ${connection.threadId}`);
-    console.log(`listening at port ${chalk.green(port)}`);
+    console.log(`Mysql connected as id ${connection.threadId}`);
+    console.log(`Mysql listening at port ${chalk.bgRed(connection.config.host, connection.config.port)}`);
     module.exports = connection;
 });
 
@@ -47,6 +47,9 @@ app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/
 app.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/img', express.static(path.join(__dirname, 'img')));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
@@ -79,13 +82,10 @@ app.get('/', (req, res) => {
             { link: '/admin', title: 'Admin: Add books to MongoDB' }],
             title: 'Main Menu'
         });  //for ejs
-    // res.render('index', { list: ['a', 'b'] }); //for pug
-    // res.send('Hello from my library app');
-    // res.sendFile(path.join(__dirname, '/views/index.html'));
-    // with path.jion ... can anyhow put in /, \ lol
 });
 
 app.listen(port, function () {
     debug(`listening at port ${chalk.green(port)}`);
+    console.log(`app is listening at port ${chalk.bgGreen(port)}`);
 });
 

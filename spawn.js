@@ -4,7 +4,8 @@ const { spawn } = require('child_process');
 
 let options = {shell: true};
 // const child = spawn('activate', ['quant'], options);
-const child = spawn('conda.bat', ['activate quant'], options);
+// const child = spawn('conda.bat', ['activate quant'], options);
+const child = spawn('dir', options);
 
 // ['python C:/Users/kl/Documents/Python_files/Systems/Scheduler/QM2_41autorun.bat']
 
