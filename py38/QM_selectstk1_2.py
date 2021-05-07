@@ -174,7 +174,10 @@ def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_dire
         if df_ticker_plot.loc[j,1] < 20:
             ax2.axvspan(df_ticker_plot.loc[j,0], df_ticker_plot.loc[j,0]+datetime.timedelta(weeks=1),ymin=0.9,ymax=1,facecolor='y',alpha=0.5,zorder=1)
 
+    ##############
     plt.show()
+    ##############
+    ##############
 
     figSave = fileSavePath+'\\'+'TM_cht_'+ticker
     fileType2save = input('Save file into 1).jpg, 2).png or not to save (n)? ')
@@ -187,11 +190,13 @@ def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_dire
     elif fileType2save=='n':
         pass
 
+    return fig
+
 ###############################################################################
 def main():
     # Input Panel
     runOnline = input('Running this online [default: Local offline] (Y/N)?').upper()
-    market2run = input(f'Select a market to run {run_list_universe.keys()}:')
+    market2run = input(f'Select a market to run {run_list_universe.keys()}:').upper()
     run_list_lib ={market2run: run_list_universe[market2run]}
     BM_index_num, run_list_num = run_list_lib[market2run][0], run_list_lib[market2run][1]
 
@@ -219,22 +224,22 @@ def main():
     df_top_momentum_names = pickle.load(data)
 
     response = ''
-    selectList=input('Select a ticker or a list to run: {}'.format(holdingList.keys()))
+    selectList=input('Select a ticker or a list to run: {}'.format(holdingList.keys())).upper()
     if selectList not in holdingList.keys():
-        ticker = selectList.upper()
-        get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
-        response=input('<Enter> to continue next name, "Q" to quit : ')
-        while response not in ['Q','q']:
-            ticker = input('Please key in next ticker: ').upper()
-            get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
-            response=input('<Enter> to continue next name, "Q" to quit : ')
-        print('Ends!')
+        ticker = selectList
+        figObj = get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
+        response=input('Please key in next ticker to continue, "Q" or <Enter> to quit : ').upper()
+        while response not in ['Q','']:
+            ticker = response
+            figObj = get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
+            response=input('Please key in next ticker to continue, "Q" or <Enter> to quit : ').upper()
+        print('Quitting, thanks for using!')
         exit()
         
     else:
         for i in holdingList[selectList]:    
             ticker = i
-            get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
+            figObj = get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
             response=input('<Enter> to continue next name, other keys to quit : ')
             if response=='':
                 continue
@@ -243,6 +248,8 @@ def main():
                 break
             if i==SG_HoldingList[-1]:
                 print('End of list!')
+
+    return figObj
     
 if __name__=='__main__':
     main()
