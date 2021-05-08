@@ -20,6 +20,7 @@ from matplotlib.ticker import MaxNLocator
 from matplotlib.ticker import ScalarFormatter
 from matplotlib import ticker
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from PIL import Image
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
@@ -96,6 +97,7 @@ def downloadTickerNameLocal(run_list, list_directory):
     return df_list, df_list_symbol
 
 def convertPlot2PNG(fig):
+    # Doesn't work
     # Convert plot to PNG image
     pngImage = io.BytesIO()
     FigureCanvas(fig).print_png(pngImage)
@@ -103,16 +105,23 @@ def convertPlot2PNG(fig):
     # Encode PNG image to base64 string
     pngImageB64String = "data:image/png;base64,"
     pngImageB64String += base64.b64encode(pngImage.getvalue()).decode('utf8')
-
     return pngImageB64String
 
 def fig_to_base64(fig):
+    # Doesn't work
     img = io.BytesIO()
-    fig.savefig(img, format='png',
-                bbox_inches='tight')
+    fig.savefig(img, format='png', bbox_inches='tight')
     img.seek(0)
+    return base64.b64encode(img.read())
 
-    return base64.b64encode(img.getvalue())
+def fig_to_base64a(fig):
+    # Doesn't work
+    img = io.BytesIO()
+    fig.savefig(img, format='png', bbox_inches='tight')
+    img = base64.b64encode(img.getvalue()).decode("utf-8").replace("\n", "")
+
+    return '<img align="left" src="data:image/png;base64,%img">' % img
+
 
 ####################################################################################################
 """PROBE: Getting a particular stock entire history rank
@@ -201,8 +210,8 @@ def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_dire
     ##############
     # imagePNG =convertPlot2PNG(fig)
 
-    with open(fileSavePath+'\\fig_image', "wb") as fh:
-        fh.write(fig)
+    # with open(fileSavePath+'\\fig_image', "wb") as fh:
+    #     fh.write(fig_to_base64a(fig))
         # fh.write(base64.decodestring(imagePNG))
         # fh.write(imagePNG.decode('base64'))
     ##############
@@ -213,7 +222,8 @@ def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_dire
     ##############
 
     figSave = fileSavePath+'\\'+'TM_cht_'+ticker
-    fileType2save = input('Save file into 1).jpg, 2).png or not to save (n)? ')
+    # fileType2save = input('Save file into 1).jpg, 2).png or not to save (n)? ')
+    fileType2save='2'
     if fileType2save=='1':
         # Using fig[0] here, somehow it changed into a tuple with 2
         fig.savefig(figSave+'.jpg')
@@ -222,14 +232,16 @@ def get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_dire
         fig.savefig(figSave+'.png')
     elif fileType2save=='n':
         pass
-
-    # return fig
+    
+    return (figSave+'.png')
 
 ###############################################################################
-def main():
+def main(runOnline,market2run,selectList,response):
     # Input Panel
-    runOnline = input('Running this online [default: Local offline] (Y/N)?').upper()
-    market2run = input(f'Select a market to run {run_list_universe.keys()}:').upper()
+    # runOnline = input('Running this online [default: Local offline] (Y/N)?').upper()
+    # market2run = input(f'Select a market to run {run_list_universe.keys()}:').upper()
+    runOnline = runOnline.upper()
+    market2run = market2run.upper()
     run_list_lib ={market2run: run_list_universe[market2run]}
     BM_index_num, run_list_num = run_list_lib[market2run][0], run_list_lib[market2run][1]
 
@@ -257,36 +269,40 @@ def main():
     df_top_momentum_names = pickle.load(data)
 
     response = ''
-    selectList=input('Select a ticker or a list to run: {}'.format(holdingList.keys())).upper()
+    # selectList=input('Select a ticker or a list to run: {}'.format(holdingList.keys())).upper()
+    selectList = selectList.upper()
     if selectList not in holdingList.keys():
         ticker = selectList
-        figObj = get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
-        response=input('Please key in next ticker to continue, "Q" or <Enter> to quit : ').upper()
-        while response not in ['Q','']:
-            ticker = response
-            figObj = get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
-            response=input('Please key in next ticker to continue, "Q" or <Enter> to quit : ').upper()
+        filelink = get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
+        # response=input('Please key in next ticker to continue, "Q" or <Enter> to quit : ').upper()
+        response=response.upper()
+        # while response not in ['Q','']:
+        #     ticker = response
+        #     filelink = get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
+        #     response=input('Please key in next ticker to continue, "Q" or <Enter> to quit : ').upper()
         print('Quitting, thanks for using!')
-        exit()
+        if __name__!='__main__':
+            exit()
         
     else:
         for i in holdingList[selectList]:    
             ticker = i
-            figObj = get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
-            response=input('<Enter> to continue next name, other keys to quit : ')
-            if response=='':
-                continue
-            else: 
-                print('Ends!')
-                break
+            filelink = get_stk_history_rank(ticker,df_top_momentum_names,run_list,df_list,list_directory,df_list_symbol,runOnline)
+            # response=input('<Enter> to continue next name, other keys to quit : ')
+            # if response=='':
+            #     continue
+            # else: 
+            #     print('Ends!')
+            #     break
             if i==SG_HoldingList[-1]:
                 print('End of list!')
 
-    
+    return filelink
     
 if __name__=='__main__':
-    main()
-
-
-
+    runOnline,market2run,selectList,response = 'n','US','OXY','q'
+    filelink = main(runOnline,market2run,selectList,response)
+    print(filelink)
+    img = Image.open(filelink)
+    img.show()
 
