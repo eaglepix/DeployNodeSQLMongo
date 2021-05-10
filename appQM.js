@@ -11,26 +11,26 @@ const session = require('express-session');
 // const sql = require('mssql');
 //--------------------------------------------------------
 //: Own modification using different library
-const mysql = require('mysql');
+// const mysql = require('mysql');
 //---------------------------------------------------------
 const app = express();
 const port = process.env.PORT || 3000;
 
 // MySQL - own adaptation
-const pool = mysql.createPool({
-    connectionLimit: 10,
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: null,
-    database: 'classicmodels'
-});
-pool.getConnection((err, connection) => {
-    if (err) throw err => { debug(err) };
-    console.log(`Mysql connected as id ${connection.threadId}`);
-    console.log(`Mysql listening at port ${chalk.bgRed(connection.config.host, connection.config.port)}`);
-    module.exports = connection;
-});
+// const pool = mysql.createPool({
+//     connectionLimit: 10,
+//     host: 'localhost',
+//     port: 3306,
+//     user: 'root',
+//     password: null,
+//     database: 'classicmodels'
+// });
+// pool.getConnection((err, connection) => {
+//     if (err) throw err => { debug(err) };
+//     console.log(`Mysql connected as id ${connection.threadId}`);
+//     console.log(`Mysql listening at port ${chalk.bgRed(connection.config.host, connection.config.port)}`);
+//     module.exports = connection;
+// });
 
 // app.use(morgan('combined'));
 app.use(morgan('tiny'));  //spill out less info ... GET/304
