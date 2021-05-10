@@ -5,11 +5,13 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set DEBUG=app,app:* & nodemon appQM.js",
+    "start": "node appQM.js",
     "lint": "eslint app.js"
   },
   "scriptsComments": {
     "start": "for linux: 'DEBUG=app nodemon app.js' "
+    "startWindow": "set DEBUG=app,app:* & nodemon appQM.js",
+
   },
   "author": "",
   "license": "ISC",
@@ -48,7 +50,7 @@
     "delay": "2500",
     "env": {
       "NODE_ENV": "development",
-      "PORT": 3030
+      "PORT": 5000
     }
   }
 }

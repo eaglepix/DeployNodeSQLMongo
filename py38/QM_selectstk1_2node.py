@@ -300,9 +300,9 @@ def main(runOnline,market2run,selectList,response):
     return filelink
     
 if __name__=='__main__':
-    runOnline,market2run,selectList,response = 'n','US','OXY','q'
+    runOnline,market2run,selectList,response = 'n','US','EXX','q'
     filelink = main(runOnline,market2run,selectList,response)
     print(filelink)
-    img = Image.open(filelink)
-    img.show()
+    # img = Image.open(filelink)
+    # img.show()
 
