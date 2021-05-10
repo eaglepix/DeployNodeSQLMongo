@@ -9,8 +9,8 @@
     "lint": "eslint app.js"
   },
   "scriptsComments": {
-    "start": "for linux: 'DEBUG=app nodemon app.js' "
-    "startWindow": "set DEBUG=app,app:* & nodemon appQM.js",
+    "start": "for linux: 'DEBUG=app nodemon app.js' ",
+    "startWindow": "set DEBUG=app,app:* & nodemon appQM.js"
 
   },
   "author": "",
