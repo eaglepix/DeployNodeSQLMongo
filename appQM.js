@@ -11,7 +11,7 @@ const session = require('express-session');
 // const sql = require('mssql');
 //--------------------------------------------------------
 //: Own modification using different library
-// const mysql = require('mysql');
+const mysql = require('mysql');
 //---------------------------------------------------------
 const app = express();
 const port = process.env.PORT || 3000;
@@ -25,12 +25,27 @@ const port = process.env.PORT || 3000;
 //     password: null,
 //     database: 'classicmodels'
 // });
-// pool.getConnection((err, connection) => {
-//     if (err) throw err => { debug(err) };
-//     console.log(`Mysql connected as id ${connection.threadId}`);
-//     console.log(`Mysql listening at port ${chalk.bgRed(connection.config.host, connection.config.port)}`);
-//     module.exports = connection;
-// });
+
+const pool = mysql.createPool({
+    connectionLimit: 10,
+    host: 'remotemysql.com',
+    port: 3306,
+    user: 'mNyDF0sDUp',
+    password: '7DmGKyNdaL',
+    database: 'mNyDF0sDUp'
+});
+// DB_HOST=remotemysql.com
+// DB_USER=mNyDF0sDUp
+// DB_PASSWORD=7DmGKyNdaL
+// DB_NAME=mNyDF0sDUp
+// DB_PORT=3306
+
+pool.getConnection((err, connection) => {
+    if (err) throw err => { debug(err) };
+    console.log(`Mysql connected as id ${connection.threadId}`);
+    console.log(`Mysql listening at port ${chalk.bgRed(connection.config.host, connection.config.port)}`);
+    module.exports = connection;
+});
 
 // app.use(morgan('combined'));
 app.use(morgan('tiny'));  //spill out less info ... GET/304
