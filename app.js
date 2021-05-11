@@ -29,7 +29,7 @@ const pool = mysql.createPool({
 pool.getConnection((err, connection) => {
     if (err) throw err => { debug(err) };
     console.log(`connected as id ${connection.threadId}`);
-    console.log(`listening at port ${chalk.green(port)}`);
+    console.log(`Mysql listening at port ${chalk.bgRed(connection.config.host, connection.config.port)}`);
     module.exports = connection;
 });
 

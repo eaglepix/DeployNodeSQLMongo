@@ -1,6 +1,12 @@
-const { MongoClient, ObjectID } = require('mongodb')  //.MongoClient
 const debug = require('debug')('app:bookController');
 const numCustomer = 8; //MongoDB to extract number of books
+
+const { mongoose } = require('mongoose')  //.MongoClient
+// Reading configVar.json : select: ID1/pw1/db1 or ID2/pw2/db2 
+const {url1, url2, url3, ID1, pw1, db1 } = require('C:/Users/kl/Documents/configVar.json').mongoDB
+var mongoURL = url1+ID1+":"+pw1+"@"+db1+url2+db1+url3;
+debug(mongoURL)
+exports.mongoURL = mongoURL;
 
 function getJSON(numCustomer) {
     return new Promise(resolve => {
@@ -26,9 +32,8 @@ function getJSON(numCustomer) {
     });
 };
 
-async function asyncCall(bookService, nav, req, res, option) {
+async function asyncCall(bookService, nav, req, res, option,mongoURL) {
     // MongoDB connection
-    const url = 'mongodb://localhost:27017';
     const dbName = 'libraryApp';
 
     if (option == 1) {
@@ -39,7 +44,8 @@ async function asyncCall(bookService, nav, req, res, option) {
         (async function mongo() {
             let client;
             try {
-                client = await MongoClient.connect(url, {
+                console.log('mongoURL to connect:',mongoURL);
+                client = await mongoose.connect(mongoURL, {
                     useNewUrlParser: true,
                     useUnifiedTopology: true
                   });
@@ -91,12 +97,15 @@ async function asyncCall(bookService, nav, req, res, option) {
         (async function mongo2() {
             let client;
             try {
-                client = await MongoClient.connect(url);
+                client = await mongoose.connect(mongoURL, {
+                    useNewUrlParser: true,
+                    useUnifiedTopology: true
+                  });
                 debug('Connected correctly to MongoDB server');
                 const db = client.db(dbName);
 
                 const col = await db.collection('books');
-                const book = await col.findOne({ _id: new ObjectID(id) });
+                const book = await col.findOne({ _id: new mongoose.ObjectID(id) });
                 debug(book);
                 // API connect to openLibrary
                 const libraryAPI  = await bookService.getBookById(book.title);
@@ -134,10 +143,10 @@ async function asyncCall(bookService, nav, req, res, option) {
 function bookController(bookService, nav) {
     console.log('bookService',bookService);
     function getIndex(req, res) {
-        asyncCall(bookService, nav, req, res, 1);
+        asyncCall(bookService, nav, req, res, 1,mongoURL);
     }
     function getById(req, res) {
-        asyncCall(bookService, nav, req, res, 2);
+        asyncCall(bookService, nav, req, res, 2,mongoURL);
     }
     function middleware(req, res, next) {
         if (req.user) {

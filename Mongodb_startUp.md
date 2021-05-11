@@ -12,3 +12,8 @@ To start up MongoDB local host: Need to open 2 cmd>
 
         > db.books.find().pretty
         > db.books.find()
+
+    3) Mongo CLI starting MongoDB Atlas
+    >mongo "mongodb+srv://pydot16.tafgx.mongodb.net/pydot16" --username eaglepix
+
+    
