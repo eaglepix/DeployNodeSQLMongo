@@ -154,30 +154,4 @@ function router(nav) {
     return bookRouter;
 };
 
-// bookRouter.route('/').get((req, res) => {
-//     const request = new sql.Request();
-//     request.query('Select * from customers')
-//         .then((result) => {
-//             debug(result);
-//             console.log(result);
-//             res.render('bookListView',
-//                 {
-//                     nav,
-//                     title: 'Library',
-//                     books: result.customerName
-//                 });
-//         });
-// bookRouter.route('/:id').get((req, res) => {
-//     const { id } = req.params;
-//     res.render('bookView',
-//         {
-//             nav,
-//             title: 'Library',
-//             book: books[id]
-//         });
-//     res.send('hello single book');
-// });
-// return bookRouter;
-// });
-
 module.exports = router;
