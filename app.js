@@ -17,7 +17,7 @@ const app = express();
 const port = process.env.PORT || 3000; // Boolean: if main port fails use backup port 3000
 //Not recommended to do port this way: process.env.PORT doesn't check if the port is available
 
-// MySQL - own adaptation
+// MySQL - variables
 const pool = mysql.createPool({
     connectionLimit: 10,
     host: 'localhost',
@@ -26,11 +26,47 @@ const pool = mysql.createPool({
     password: null,
     database: 'classicmodels'
 });
+// connectionLimit: 10,
+// host: 'sql207.epizy.com',
+// port: 3306,
+// user: 'epiz_28596001',
+// password: 'Sb8ZZ1YXAYlFQ',
+// database: 'epiz_28596001_classicmodels'
+
+// MongoDB Atlas connection variables
+const mongoose = require('mongoose');
+// Reading configVar.json
+const env = require('C:/Users/kl/Documents/configVar.json').mongoDB
+const ID = env['ID2'];
+const pw = env['pw2'];
+const db = env['db1'];
+const mongoURL = env['url1'] + ID + ":" + pw + "@" + env['url2'] + db + env['url3'];
+
+const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+};
+
+// 2 different ways of module exports:
+module.exports = {
+    mongoDBconnection: (async () => {
+        var client = mongoose.connection;
+        console.log('Not connected=0 =>', mongoose.connection.readyState);
+        console.log('Connecting to Mongo Atlas Server ...');
+        await mongoose.connect(mongoURL, options);
+        console.log('Connected=1 =>', mongoose.connection.readyState);
+        console.log('Connected correctly to MongoDB server ');
+        client.on('error', console.error.bind(console, 'MongoDB Atlas connection error:'));
+        // console.log(client);
+        return client;
+    })
+};
+
 pool.getConnection((err, connection) => {
     if (err) throw err => { debug(err) };
     console.log(`connected as id ${connection.threadId}`);
     console.log(`Mysql listening at port ${chalk.bgRed(connection.config.host, connection.config.port)}`);
-    module.exports = connection;
+    module.exports.sqlConnection = connection;
 });
 
 // app.use(morgan('combined'));
@@ -73,10 +109,6 @@ app.get('/', (req, res) => {
             { link: '/admin', title: 'Admin: Add books to MongoDB' }],
             title: 'Main Menu'
         });  //for ejs
-    // res.render('index', { list: ['a', 'b'] }); //for pug
-    // res.send('Hello from my library app');
-    // res.sendFile(path.join(__dirname, '/views/index.html'));
-    // with path.jion ... can anyhow put in /, \ lol
 });
 
 app.listen(port, function () {

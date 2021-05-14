@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const debug = require('debug')('app:authRoutes');
 const authRouter = express.Router();
-const {mongoURL, options}  = require('../controllers/bookController')
+const { mongoDBconnection } = require('../../app');
+
 const passwordValidator = require('password-validator');
 // Create a schema
 var schema = new passwordValidator();
@@ -37,29 +38,14 @@ function router(nav) {
                 // check user details and create user
                 const { username, password } = req.body;
 
-                // var client = mongoose.connection;
-                // console.log('Not connected=0 =>', mongoose.connection.readyState);
-                // console.log('Connecting to Mongo Atlas Server ...');
-                // await mongoose.connect(mongoURL, options);
-                // console.log('Connected=1 =>', mongoose.connection.readyState);
-                // console.log('Connected correctly to MongoDB server ');
-                // client.on('error', console.error.bind(console, 'MongoDB Atlas connection error:'));
-
-                const validEntry = await checkValidID_PW(username, password);
+                const client = await mongoDBconnection();
+                const validEntry = checkValidID_PW(username, password);
                 if (!validEntry) {
                     req.session.error = 'Incorrect username or password';
                     res.redirect('../../?error=' + encodeURIComponent('Incorrect_Credential'));
                     delete req.session.error; // remove from further requests
                 } else {
                     try {
-                        var client = mongoose.connection;
-                        console.log('Not connected=0 =>', mongoose.connection.readyState);
-                        console.log('Connecting to Mongo Atlas Server ...');
-                        await mongoose.connect(mongoURL, options);
-                        console.log('Connected=1 =>', mongoose.connection.readyState);
-                        console.log('Connected correctly to MongoDB server ');
-                        client.on('error', console.error.bind(console, 'MongoDB Atlas connection error:'));
-                        
                         const db = client.useDb(dbName);
                         const col = db.collection('users');
                         const user = { username, password };

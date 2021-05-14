@@ -1,10 +1,8 @@
 const express = require('express');
 const bookRouter = express.Router();
 const debug = require('debug')('app:bookRoutes');
+const DB_connections = require('../../app');
 
-const getConnection = () => {
-    return require('../../app');
-}
 const numCustomer = 10; //SQL to extract number of customers
 var currPage;
 
@@ -41,20 +39,21 @@ async function asyncCall(nav, req, res, option, numCustomer) {
 
         let pgNum;
         debug(req.params);
-        console.log('req.params',req.params);
-        if ( Object.keys(req.params).length === 0 ) {
+        console.log('req.params', req.params);
+        if (Object.keys(req.params).length === 0) {
             console.log('req.param is null');
             pgNum = 1;
         } else {
             pgNum = req.params.pgNum;
-            console.log('pgNum',pgNum);
+            console.log('pgNum', pgNum);
         }
         currPage = Number(pgNum);
-        console.log('currPage',currPage);
-        offsetNum = (currPage-1)*numCustomer;
+        console.log('currPage', currPage);
+        offsetNum = (currPage - 1) * numCustomer;
 
         // example: query(sqlString, callback)
-        await getConnection().query(`SELECT * from customers LIMIT ${numCustomer} OFFSET ${offsetNum}`, (err, result) => {
+        const sql = DB_connections.sqlConnection;
+        sql.query(`SELECT * from customers LIMIT ${numCustomer} OFFSET ${offsetNum}`, (err, result) => {
             // connection.release(); // When done with the connection, release it.
             debug(result);
             let contactName = new Array();
@@ -96,7 +95,9 @@ async function asyncCall(nav, req, res, option, numCustomer) {
         // connection.input('customerNumber', customerNumber)
         // .query(`SELECT * from customers WHERE customerNumber=@customerNumber}`, (err, result) => {
         // example: query(sqlString, callback)
-        await getConnection().query('SELECT * from customers WHERE customerNumber=?', [customerNumber], (err, result) => {
+
+        const sql = DB_connections.sqlConnection;
+        sql.query('SELECT * from customers WHERE customerNumber=?', [customerNumber], (err, result) => {
             // getConnection().query(`SELECT * from customers WHERE customerNumber=${customerNumber}`, (err, result) => {
             console.log('Result:', result[0]);
             console.log(result[0].customerName);

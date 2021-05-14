@@ -1,19 +1,7 @@
 const debug = require('debug')('app:bookController');
 const numCustomer = 8; //MongoDB to extract number of books
-
-// const MongoClient = require('mongodb').MongoClient;
 const mongoose = require('mongoose');
-// Reading configVar.json
-const env = require('C:/Users/kl/Documents/configVar.json').mongoDB
-const ID = env['ID2'];
-const pw = env['pw2'];
-const db = env['db1'];
-const mongoURL = env['url1'] + ID + ":" + pw + "@" + env['url2'] + db + env['url3'];
-
-const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-};
+const { mongoDBconnection } = require('../../app');
 
 function getJSON(numCustomer) {
     return new Promise(resolve => {
@@ -39,24 +27,18 @@ function getJSON(numCustomer) {
     });
 };
 
-async function asyncCall(bookService, nav, req, res, option, mongoURL, options) {
+async function asyncCall(bookService, nav, req, res, option) {
     // MongoDB Atlas connection
     const dbName = 'libraryApp';  //libraryApp  pydot16
 
-    if (option == 1) {
+    if (option == 'getAll') {
         console.log('calling randomuser photos');
         const faceLinkArray = await getJSON(numCustomer);
         console.log('randomuser successfully retrieved', faceLinkArray);
 
         (async () => {
-            var client = mongoose.connection;
-            console.log('Not connected=0 =>', mongoose.connection.readyState);
-            console.log('Connecting to Mongo Atlas Server ...');
-            await mongoose.connect(mongoURL, options);
-            console.log('Connected=1 =>', mongoose.connection.readyState);
-            console.log('Connected correctly to MongoDB server ');
-            client.on('error', console.error.bind(console, 'MongoDB Atlas connection error:'));
             try {
+                const client = await mongoDBconnection();
                 const db = client.useDb(dbName);
 
                 const col = db.collection('books');
@@ -92,10 +74,9 @@ async function asyncCall(bookService, nav, req, res, option, mongoURL, options) 
                 console.error(`Error operating the database. \n${err}`);
                 debug(err.stack);
             };
-            client.close();
         })();
 
-    } else if (option == 2) {
+    } else if (option == 'getById') {
         const numCustomer = 1;
         const faceLinkArray = await getJSON(numCustomer);
         console.log('async', faceLinkArray);
@@ -103,14 +84,8 @@ async function asyncCall(bookService, nav, req, res, option, mongoURL, options) 
         const { id } = req.params;
 
         (async () => {
-            var client = mongoose.connection;
-            console.log('Not connected=0 =>', mongoose.connection.readyState);
-            console.log('Connecting to Mongo Atlas Server ...');
-            await mongoose.connect(mongoURL, options);
-            console.log('Connected=1 =>', mongoose.connection.readyState);
-            console.log('Connected correctly to MongoDB server ');
-            client.on('error', console.error.bind(console, 'MongoDB Atlas connection error:'));
             try {
+                const client = await mongoDBconnection();
                 const db = client.useDb(dbName);
 
                 const col = db.collection('books');
@@ -147,7 +122,6 @@ async function asyncCall(bookService, nav, req, res, option, mongoURL, options) 
                 console.error(`Error operating the database. \n${err}`);
                 debug(err.stack);
             };
-            client.close();
         })();
     };
 };
@@ -156,10 +130,10 @@ async function asyncCall(bookService, nav, req, res, option, mongoURL, options) 
 function bookController(bookService, nav) {
     console.log('bookService', bookService);
     function getIndex(req, res) {
-        asyncCall(bookService, nav, req, res, 1, mongoURL, options);
+        asyncCall(bookService, nav, req, res, 'getAll');
     }
     function getById(req, res) {
-        asyncCall(bookService, nav, req, res, 2, mongoURL, options);
+        asyncCall(bookService, nav, req, res, 'getById');
     }
     function middleware(req, res, next) {
         if (req.user) {
@@ -175,6 +149,6 @@ function bookController(bookService, nav) {
 
 module.exports = {
     'bookController': bookController,
-    'mongoURL': mongoURL,
-    'options': options
+    // 'mongoURL': mongoURL,
+    // 'options': options
 };

@@ -1,8 +1,6 @@
 const express = require('express');
 const adminRouter = express.Router();
-const mongoose = require('mongoose');
-const {mongoURL, options}  = require('../controllers/bookController')
-
+const { mongoDBconnection } = require('../../app');
 const debug = require('debug')('app:adminRoutes');
 
 const books = [
@@ -58,26 +56,19 @@ const books = [
 module.exports = function router(nav) {
     adminRouter.route('/')
         .get((req, res) => {
-            var client = mongoose.connection;
-            console.log('Not connected=0 =>', mongoose.connection.readyState);
             const dbName = 'libraryApp';
 
             (async function mongo() {
                 try {
-                    console.log('Connecting to Mongo Atlas Server ...');
-                    await mongoose.connect(mongoURL, options);
-                    console.log('Connected=1 =>', mongoose.connection.readyState);
-                    console.log('Connected correctly to MongoDB server ');
-                    client.on('error', console.error.bind(console, 'MongoDB Atlas connection error:'));
-        
+                    const client = await mongoDBconnection();
                     const db = client.useDb(dbName);
                     if (books.length == 0) return res.status(422).json('No data to insert');
                     const response = await db.collection('books').insertMany(books);
-                    res.json(response);
+                    res.json({ 'Books inserted': response });
                 } catch (err) {
                     debug(err.stack);
                 }
-                client.close();
+                // client.close();
             }());
             // res.send('inserting books');
         });
