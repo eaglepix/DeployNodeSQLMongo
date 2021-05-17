@@ -13,16 +13,17 @@ const port = process.env.PORT || 3000; // Boolean: if main port fails use backup
 
 // cleardb MySQL server connection:
 const mysql = require('mysql');
-const { cleardb } = require('C:/Users/kl/Documents/configVar.json');
+const pool = mysql.createPool(process.env.MYSQL_URL);
 
-const pool = mysql.createPool({
-    connectionLimit: 10,
-    host: cleardb.host,
-    port: 3306,
-    user: cleardb.Username,
-    password: cleardb.Password,
-    database: cleardb.database
-});
+// const { cleardb } = require('C:/Users/kl/Documents/configVar.json');
+// const pool = mysql.createPool({
+//     connectionLimit: 10,
+//     host: cleardb.host,
+//     port: 3306,
+//     user: cleardb.Username,
+//     password: cleardb.Password,
+//     database: cleardb.database
+// });
 // connectionLimit: 10,
 // host: 'localhost',
 // port: 3306,
@@ -33,11 +34,12 @@ const pool = mysql.createPool({
 // MongoDB Atlas connection variables
 const mongoose = require('mongoose');
 // Reading configVar.json
-const mgo = require('C:/Users/kl/Documents/configVar.json').mongoDB;
-const ID = mgo['ID2'];
-const pw = mgo['pw2'];
-const db = mgo['db1'];
-const mongoURL = mgo['url1'] + ID + ":" + pw + "@" + mgo['url2'] + db + mgo['url3'];
+// const mgo = require('C:/Users/kl/Documents/configVar.json').mongoDB;
+// const ID = mgo['ID2'];
+// const pw = mgo['pw2'];
+// const db = mgo['db1'];
+// const mongoURL = mgo['url1'] + ID + ":" + pw + "@" + mgo['url2'] + db + mgo['url3'];
+const mongoURL = process.env.MONGODB_URL;
 
 const options = {
     useNewUrlParser: true,
