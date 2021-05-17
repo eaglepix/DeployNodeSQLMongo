@@ -7,40 +7,37 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-
-// const sql = require('mssql');
-//--------------------------------------------------------
-//: Own modification using different library
-const mysql = require('mysql');
-//---------------------------------------------------------
 const app = express();
 const port = process.env.PORT || 3000; // Boolean: if main port fails use backup port 3000
 //Not recommended to do port this way: process.env.PORT doesn't check if the port is available
 
-// MySQL - variables
+// cleardb MySQL server connection:
+const mysql = require('mysql');
+const { cleardb } = require('C:/Users/kl/Documents/configVar.json');
+
 const pool = mysql.createPool({
     connectionLimit: 10,
-    host: 'localhost',
+    host: cleardb.host,
     port: 3306,
-    user: 'root',
-    password: null,
-    database: 'classicmodels'
+    user: cleardb.Username,
+    password: cleardb.Password,
+    database: cleardb.database
 });
 // connectionLimit: 10,
-// host: 'sql207.epizy.com',
+// host: 'localhost',
 // port: 3306,
-// user: 'epiz_28596001',
-// password: 'Sb8ZZ1YXAYlFQ',
-// database: 'epiz_28596001_classicmodels'
+// user: 'root',
+// password: null,
+// database: 'classicmodels'
 
 // MongoDB Atlas connection variables
 const mongoose = require('mongoose');
 // Reading configVar.json
-const env = require('C:/Users/kl/Documents/configVar.json').mongoDB
-const ID = env['ID2'];
-const pw = env['pw2'];
-const db = env['db1'];
-const mongoURL = env['url1'] + ID + ":" + pw + "@" + env['url2'] + db + env['url3'];
+const mgo = require('C:/Users/kl/Documents/configVar.json').mongoDB;
+const ID = mgo['ID2'];
+const pw = mgo['pw2'];
+const db = mgo['db1'];
+const mongoURL = mgo['url1'] + ID + ":" + pw + "@" + mgo['url2'] + db + mgo['url3'];
 
 const options = {
     useNewUrlParser: true,

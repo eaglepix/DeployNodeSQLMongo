@@ -28,11 +28,11 @@ const port = process.env.PORT || 3000;
 
 const pool = mysql.createPool({
     connectionLimit: 10,
-    host: 'remotemysql.com',
+    host: 'us-cdbr-east-03.cleardb.com/',
     port: 3306,
-    user: 'mNyDF0sDUp',
-    password: '7DmGKyNdaL',
-    database: 'mNyDF0sDUp'
+    user: 'b75a659d20bd9a',
+    password: '4bee931012c60a4',
+    database: 'heroku_9e517d70fb252bb'
 });
 // DB_HOST=remotemysql.com
 // DB_USER=mNyDF0sDUp
