@@ -24,7 +24,7 @@ const pool = mysql.createPool(process.env.MYSQL_URL);
 //     user: cleardb.Username,
 //     password: cleardb.Password,
 //     database: cleardb.database
-});
+// });
 // connectionLimit: 10,
 // host: 'localhost',
 // port: 3306,
