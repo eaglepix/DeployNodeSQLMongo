@@ -15,6 +15,7 @@ const port = process.env.PORT || 3000; // Boolean: if main port fails use backup
 const mysql = require('mysql');
 const pool = mysql.createPool(process.env.MYSQL_URL);
 
+// To deploy the databases locally:
 // const { cleardb } = require('C:/Users/kl/Documents/configVar.json');
 // const pool = mysql.createPool({
 //     connectionLimit: 10,
@@ -23,7 +24,7 @@ const pool = mysql.createPool(process.env.MYSQL_URL);
 //     user: cleardb.Username,
 //     password: cleardb.Password,
 //     database: cleardb.database
-// });
+});
 // connectionLimit: 10,
 // host: 'localhost',
 // port: 3306,
